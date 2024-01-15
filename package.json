@@ -2,7 +2,8 @@
   "name": "go-builder-pattern-boilerplate",
   "displayName": "Go Builder Pattern Boilerplate",
   "description": "Automatically generates boilerplate code for the Golang builder pattern",
-  "version": "1.0.0",
+  "icon": "images/icon.png",
+  "version": "1.0.1",
   "publisher": "SammyColon",
   "repository": {
     "type": "git",
