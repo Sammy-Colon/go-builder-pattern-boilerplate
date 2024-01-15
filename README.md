@@ -75,4 +75,8 @@ Release history:
 
 Initial release of the extension
 
+### 1.0.1
+
+- Add extension icon
+
 ---
