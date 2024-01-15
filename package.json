@@ -5,6 +5,10 @@
   "icon": "images/icon.png",
   "version": "1.0.1",
   "publisher": "SammyColon",
+  "author": {
+    "name": "Sammy Colon",
+    "email": "sammy.colon@posteo.me"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Sammy-Colon/go-builder-pattern-boilerplate"
@@ -13,7 +17,15 @@
     "vscode": "^1.80.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Snippets"
+  ],
+  "keywords": [
+    "Go",
+    "Golang",
+    "Builder",
+    "Pattern",
+    "Builder Pattern"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",

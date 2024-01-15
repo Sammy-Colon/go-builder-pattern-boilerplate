@@ -2,9 +2,11 @@
 
 This extension generates the boilerplate code you need when using the builder pattern in Go.
 
+It is available as the **Go Builder Pattern Boilerplate** extension in the [VSC Marketplace](https://marketplace.visualstudio.com/items?itemName=SammyColon.go-builder-pattern-boilerplate) and [VSCodium Marketplace](https://open-vsx.org/extension/SammyColon/go-builder-pattern-boilerplate).
+
 ## Features
 
-The extension adds the command "Generate Boilerplate". Select a struct and execute the command. The generated code will automatically be pasted under your selected text.
+The extension adds the command **Generate Boilerplate**. Select a struct and execute the command. The generated code will automatically be pasted under your selected text.
 
 Example:
 
@@ -78,5 +80,9 @@ Initial release of the extension
 ### 1.0.1
 
 - Add extension icon
+
+### 1.0.2
+
+- Changes to README and package.json
 
 ---
