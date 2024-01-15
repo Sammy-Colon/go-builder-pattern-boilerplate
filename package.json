@@ -3,6 +3,7 @@
   "displayName": "Go Builder Pattern Boilerplate",
   "description": "Automatically generates boilerplate code for the Golang builder pattern",
   "version": "1.0.0",
+  "publisher": "SammyColon",
   "repository": {
     "type": "git",
     "url": "https://github.com/Sammy-Colon/go-builder-pattern-boilerplate"
