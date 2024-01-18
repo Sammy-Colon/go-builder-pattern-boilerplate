@@ -84,5 +84,14 @@ Initial release of the extension
 ### 1.0.2
 
 - Changes to README and package.json
+  
+### 1.0.3
+
+- Support for structs having multiple attributes declared in one line
+  - for example with: `A, B, C string`
+
+### 1.0.4
+
+- Update README and CHANGELOG
 
 ---
