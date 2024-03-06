@@ -2,6 +2,14 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
+type GeneratorVersions = "v1" | "v2";
+
+type Config = {
+	generatorVersion: GeneratorVersions
+}
+
+let config: Config;
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -19,6 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function generateBoilerplate() {
+	config = vscode.workspace.getConfiguration("goBuilderPatternBoilerplate") as unknown as Config;
 	const editor = vscode.window.activeTextEditor;
 
 	if (editor === undefined) {
@@ -27,6 +36,12 @@ function generateBoilerplate() {
 
 	const selection = editor.selection;
 	const text = editor.document.getText(selection).trim();
+
+	if (text.length === 0) {
+		vscode.window.showErrorMessage("You need to select text!");
+		return;
+	}
+
 	const lines = text
 		.split("\n")
 		.filter(line => line.trim() !== "\n")
@@ -41,21 +56,50 @@ function generateBoilerplate() {
 	const structName = lines[0].split(" ")[1].trim();
 
 	editor.edit(editBuilder => {
-		editBuilder.insert(selection.end, `\n${generateOptionType(structName)}`);
-
-		for (const line of lines.slice(1, -1)) {
-			const lastSpaceIndex = line.lastIndexOf(" ");
-			const dataType = line.substring(lastSpaceIndex + 1);
-			const attributeString = line.substring(0, lastSpaceIndex);
-			const attributes = attributeString.split(",").map(attribute => attribute.trim());
-
-			for (const attribute of attributes) {
-				editBuilder.insert(selection.end, generateWithFunction(structName, attribute, dataType));
-			}
+		if (config.generatorVersion === "v1") {
+			generateBoilerplateV1(editBuilder, selection, structName, lines);
+		} else if (config.generatorVersion === "v2") {
+			generateBoilerplateV2(editBuilder, selection, structName, lines);
+		} else {
+			vscode.window.showErrorMessage("Invalid generator version!");
 		}
-
-		editBuilder.insert(selection.end, `${generateBuildFunctions(structName)}`);
 	});
+}
+
+function generateBoilerplateV1(editBuilder: vscode.TextEditorEdit, selection: vscode.Selection, structName: string, lines: string[]) {
+	let code = `\n${generateOptionType(structName)}`;
+
+	for (const line of lines.slice(1, -1)) {
+		const lastSpaceIndex = line.lastIndexOf(" ");
+		const dataType = line.substring(lastSpaceIndex + 1);
+		const attributeString = line.substring(0, lastSpaceIndex);
+		const attributes = attributeString.split(",").map(attribute => attribute.trim());
+
+		for (const attribute of attributes) {
+			code += generateWithFunctionV1(structName, attribute, dataType);
+		}
+	}
+
+	code += generateBuildFunctions(structName);
+	editBuilder.insert(selection.end, code);
+}
+
+function generateBoilerplateV2(editBuilder: vscode.TextEditorEdit, selection: vscode.Selection, structName: string, lines: string[]) {
+	let code = "\n";
+
+	for (const line of lines.slice(1, -1)) {
+		const lastSpaceIndex = line.lastIndexOf(" ");
+		const dataType = line.substring(lastSpaceIndex + 1);
+		const attributeString = line.substring(0, lastSpaceIndex);
+		const attributes = attributeString.split(",").map(attribute => attribute.trim());
+
+		for (const attribute of attributes) {
+			code += generateWithFunctionV2(structName, attribute, dataType);
+		}
+	}
+
+	code += generateBuildFunction(structName);
+	editBuilder.insert(selection.end, code);
 }
 
 function generateBuildFunctions(structName: string): string {
@@ -74,7 +118,7 @@ func Create${structName}(options ...${structName}Option) ${structName} {
 
 	return ${uncapitalizedStructName}
 }
-	`;
+`;
 }
 
 function generateOptionType(structName: string): string {
@@ -83,7 +127,7 @@ type ${structName}Option func(${structName}) ${structName}
 	`;
 }
 
-function generateWithFunction(structName: string, attribute: string, dataType: string): string {
+function generateWithFunctionV1(structName: string, attribute: string, dataType: string): string {
 	const uncapitalizedStructName = structName[0].toLowerCase() + structName.slice(1);
 	const capitalizedAttribute = attribute[0].toUpperCase() + attribute.slice(1);
 	const uncapitalizedAttribute = attribute[0].toLowerCase() + attribute.slice(1);
@@ -95,7 +139,32 @@ func With${capitalizedAttribute}(${uncapitalizedAttribute} ${dataType}) ${option
 		return ${uncapitalizedStructName}
 	}
 }
-	`;
+`;
+}
+
+function generateWithFunctionV2(structName: string, attribute: string, dataType: string): string {
+	const uncapitalizedStructName = structName[0].toLowerCase() + structName.slice(1);
+	const capitalizedAttribute = attribute[0].toUpperCase() + attribute.slice(1);
+	const uncapitalizedAttribute = attribute[0].toLowerCase() + attribute.slice(1);
+	return `
+func (${uncapitalizedStructName} *${structName}) With${capitalizedAttribute}(${uncapitalizedAttribute} ${dataType}) *${structName} {
+	${uncapitalizedStructName}.${attribute} = ${uncapitalizedAttribute};
+	return ${uncapitalizedStructName};
+}
+`;
+}
+
+function generateBuildFunction(structName: string): string {
+	const uncapitalizedStructName = structName[0].toLowerCase() + structName.slice(1);
+	return `
+func (${uncapitalizedStructName} *${structName}) Build() ${structName} {
+	return *${uncapitalizedStructName};
+}
+
+func Default${structName}() *${structName} {
+	return &${structName}{}
+}
+`;
 }
 
 // This method is called when your extension is deactivated

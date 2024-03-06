@@ -3,7 +3,7 @@
   "displayName": "Go Builder Pattern Boilerplate",
   "description": "Automatically generates boilerplate code for the Golang builder pattern",
   "icon": "images/icon.png",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "SammyColon",
   "author": {
     "name": "Sammy Colon",
@@ -34,6 +34,25 @@
       {
         "command": "go-builder-pattern-boilerplate.generateBoilerplate",
         "title": "Generate Boilerplate"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "Go Builder Pattern Boilerplate",
+        "properties": {
+          "goBuilderPatternBoilerplate.generatorVersion": {
+            "enum": [
+              "v1",
+              "v2"
+            ],
+            "enumDescriptions": [
+              "CreateObject(WithProperty1(\"property1\"), WithProperty2(\"property2\"))",
+              "DefaultObject().WithProperty1(\"property1\").WithProperty2(\"property2\").Build()"
+            ],
+            "default": "v2",
+            "description": "Version of the Code Generator"
+          }
+        }
       }
     ]
   },
