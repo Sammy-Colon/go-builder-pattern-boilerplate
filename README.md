@@ -7,6 +7,7 @@ It is available as the **Go Builder Pattern Boilerplate** extension in the [VSC 
 ## Features
 
 The extension adds the command **Generate Boilerplate**. Select a struct and execute the command. The generated code will automatically be pasted under your selected text.
+You can use two different code generators: `v1` and `v2`.
 
 Example:
 
@@ -21,7 +22,7 @@ type Config struct {
 
 Select your struct in your editor. Execute the command "Generate Boilerplate" (with <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> and typing the command)
 
-It adds the following lines of code:
+When using the old generator (`v1`), it adds the following lines of code:
 
 ```go
 type ConfigOption func(Config) Config
@@ -69,6 +70,52 @@ func CreateConfig(options ...ConfigOption) Config {
 }
 ```
 
+When using the newer `v2` code generator, there will be generated the following code:
+
+```go
+func (config *Config) WithAddress(address string) *Config {
+	config.Address = address
+	return config
+}
+
+func (config *Config) WithPort(port uint16) *Config {
+	config.Port = port
+	return config
+}
+
+func (config *Config) WithLogLevel(logLevel string) *Config {
+	config.LogLevel = logLevel
+	return config
+}
+
+func (config *Config) WithEnvironment(environment string) *Config {
+	config.Environment = environment
+	return config
+}
+
+func (config *Config) Build() Config {
+	return *config
+}
+
+func DefaultConfig() *Config {
+	return &Config{}
+}
+```
+
+## Usage of generated code
+
+### v1
+
+```go
+config := CreateConfig(WithAddress("localhost"), WithPort(3000))
+```
+
+### v2
+
+```go
+config := DefaultConfig().WithAddress("localhost").WithPort(3000).Build()
+```
+
 ## Release Notes
 
 Release history:
@@ -93,5 +140,10 @@ Initial release of the extension
 ### 1.0.4
 
 - Update README and CHANGELOG
+
+### 1.0.5
+
+- New code generator
+- Option to switch to the old code generator
 
 ---
