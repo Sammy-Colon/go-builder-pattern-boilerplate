@@ -146,4 +146,8 @@ Initial release of the extension
 - New code generator
 - Option to switch to the old code generator
 
+### 1.0.6
+
+- Struct tags were not ignored, which lead to incorrect code generation
+
 ---
