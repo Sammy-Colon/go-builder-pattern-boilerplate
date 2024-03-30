@@ -8,6 +8,11 @@ type Config = {
 	generatorVersion: GeneratorVersions
 }
 
+type Attribute = {
+	name: string;
+	dataType: string;
+}
+
 let config: Config;
 
 // This method is called when your extension is activated
@@ -66,18 +71,35 @@ function generateBoilerplate() {
 	});
 }
 
-function generateBoilerplateV1(editBuilder: vscode.TextEditorEdit, selection: vscode.Selection, structName: string, lines: string[]) {
-	let code = `\n${generateOptionType(structName)}`;
+function getAttributes(lines: string[]): Attribute[] {
+	const attributeObjects: Attribute[] = [];
 
-	for (const line of lines.slice(1, -1)) {
+	for (let line of lines) {
+		const tagsStartIndex = line.indexOf("`")
+		if (tagsStartIndex !== -1) {
+			line = line.substring(0, tagsStartIndex).trim();
+		}
 		const lastSpaceIndex = line.lastIndexOf(" ");
 		const dataType = line.substring(lastSpaceIndex + 1);
 		const attributeString = line.substring(0, lastSpaceIndex);
 		const attributes = attributeString.split(",").map(attribute => attribute.trim());
 
 		for (const attribute of attributes) {
-			code += generateWithFunctionV1(structName, attribute, dataType);
+			attributeObjects.push({
+				name: attribute,
+				dataType: dataType
+			})
 		}
+	}
+
+	return attributeObjects;
+}
+
+function generateBoilerplateV1(editBuilder: vscode.TextEditorEdit, selection: vscode.Selection, structName: string, lines: string[]) {
+	let code = `\n${generateOptionType(structName)}`;
+
+	for (const attribute of getAttributes(lines.slice(1, -1))) {
+		code += generateWithFunctionV1(structName, attribute.name, attribute.dataType);
 	}
 
 	code += generateBuildFunctions(structName);
@@ -87,15 +109,8 @@ function generateBoilerplateV1(editBuilder: vscode.TextEditorEdit, selection: vs
 function generateBoilerplateV2(editBuilder: vscode.TextEditorEdit, selection: vscode.Selection, structName: string, lines: string[]) {
 	let code = "\n";
 
-	for (const line of lines.slice(1, -1)) {
-		const lastSpaceIndex = line.lastIndexOf(" ");
-		const dataType = line.substring(lastSpaceIndex + 1);
-		const attributeString = line.substring(0, lastSpaceIndex);
-		const attributes = attributeString.split(",").map(attribute => attribute.trim());
-
-		for (const attribute of attributes) {
-			code += generateWithFunctionV2(structName, attribute, dataType);
-		}
+	for (const attribute of getAttributes(lines.slice(1, -1))) {
+		code += generateWithFunctionV2(structName, attribute.name, attribute.dataType);
 	}
 
 	code += generateBuildFunction(structName);
