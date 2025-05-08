@@ -6,12 +6,12 @@ type GeneratorVersions = "v1" | "v2";
 
 type Config = {
 	generatorVersion: GeneratorVersions
-}
+};
 
 type Attribute = {
 	name: string;
 	dataType: string;
-}
+};
 
 let config: Config;
 
@@ -75,7 +75,7 @@ function getAttributes(lines: string[]): Attribute[] {
 	const attributeObjects: Attribute[] = [];
 
 	for (let line of lines) {
-		const tagsStartIndex = line.indexOf("`")
+		const tagsStartIndex = line.indexOf("`");
 		if (tagsStartIndex !== -1) {
 			line = line.substring(0, tagsStartIndex).trim();
 		}
@@ -88,7 +88,7 @@ function getAttributes(lines: string[]): Attribute[] {
 			attributeObjects.push({
 				name: attribute,
 				dataType: dataType
-			})
+			});
 		}
 	}
 
