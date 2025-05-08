@@ -76,12 +76,26 @@ function getAttributes(lines: string[]): Attribute[] {
 
 	for (let line of lines) {
 		const tagsStartIndex = line.indexOf("`");
+
 		if (tagsStartIndex !== -1) {
-			line = line.substring(0, tagsStartIndex).trim();
+			line = line.substring(0, tagsStartIndex);
 		}
+
+		line = line.trim();
+
 		const lastSpaceIndex = line.lastIndexOf(" ");
-		const dataType = line.substring(lastSpaceIndex + 1);
-		const attributeString = line.substring(0, lastSpaceIndex);
+
+		let attributeString = line.substring(0, lastSpaceIndex);
+		let dataType = line.substring(lastSpaceIndex + 1);
+
+		if (lastSpaceIndex === -1) {
+			attributeString = line.trim();
+			dataType = attributeString;
+		} else {
+			attributeString = line.substring(0, lastSpaceIndex);
+			dataType = line.substring(lastSpaceIndex + 1);
+		}
+
 		const attributes = attributeString.split(",").map(attribute => attribute.trim());
 
 		for (const attribute of attributes) {
