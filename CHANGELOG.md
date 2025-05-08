@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2025-05-08
+
+### Fixed
+
+- Fix generation error, when using embedded structs like these:
+
+```go
+
+type Struct1 {
+	Property string
+	Struct2
+}
+
+type Struct2 {
+	AnotherProperty string
+}
+
+```
+
 ## [1.0.6] - 2024-03-30
 
 ### Fixed

@@ -150,4 +150,21 @@ Initial release of the extension
 
 - Struct tags were not ignored, which lead to incorrect code generation
 
+### 1.0.7
+
+- Fix generation error, when using embedded structs like these:
+
+```go
+
+type Struct1 {
+	Property string
+	Struct2
+}
+
+type Struct2 {
+	AnotherProperty string
+}
+
+```
+
 ---
